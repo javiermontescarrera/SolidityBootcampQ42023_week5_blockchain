@@ -49,6 +49,14 @@ contract Lottery is Ownable {
         purchaseRatio = _purchaseRatio;
         betPrice = _betPrice;
         betFee = _betFee;
+        betsOpen = false;
+    }
+
+    function getLotteryStatus() public view returns (string memory strBetsOpen) {
+        strBetsOpen = "Closed";
+        if (betsOpen) {
+            strBetsOpen = "Open";
+        }
     }
 
     /// @notice Passes when the lottery is at closed state
@@ -101,7 +109,7 @@ contract Lottery is Ownable {
 
     /// @notice Closes the lottery and calculates the prize, if any
     /// @dev Anyone can call this function at any time after the closing time
-    function closeLottery() external {
+    function closeLottery() external onlyOwner {
         require(block.timestamp >= betsClosingTime, "Too soon to close");
         require(betsOpen, "Already closed");
         if (_slots.length > 0) {
@@ -117,7 +125,7 @@ contract Lottery is Ownable {
     /// @notice Returns a random number calculated from the previous block randao
     /// @dev This only works after The Merge
     function getRandomNumber() public view returns (uint256 randomNumber) {
-        // TODO
+        randomNumber = block.prevrandao;
     }
 
     /// @notice Withdraws `amount` from that accounts's prize pool
