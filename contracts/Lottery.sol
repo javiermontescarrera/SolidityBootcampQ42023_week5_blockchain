@@ -117,26 +117,31 @@ contract Lottery is Ownable {
     /// @notice Returns a random number calculated from the previous block randao
     /// @dev This only works after The Merge
     function getRandomNumber() public view returns (uint256 randomNumber) {
-        // TODO
+        //TODO - done
+        randomNumber = uint256(blockhash(block.number - 1));
     }
 
     /// @notice Withdraws `amount` from that accounts's prize pool
     function prizeWithdraw(uint256 amount) external {
         require(amount <= prize[msg.sender], "Not enough prize");
         prize[msg.sender] -= amount;
-        // TODO
+        // TODO -done
+         payable(msg.sender).transfer(amount);
     }
 
     /// @notice Withdraws `amount` from the owner's pool
     function ownerWithdraw(uint256 amount) external onlyOwner {
         require(amount <= ownerPool, "Not enough fees collected");
         ownerPool -= amount;
-        // TODO
+        // TODO -done
+        payable(msg.sender).transfer(amount);
     }
 
     /// @notice Burns `amount` tokens and give the equivalent ETH back to user
     function returnTokens(uint256 amount) external {
         paymentToken.burnFrom(msg.sender, amount);
-        // TODO
+        // TODO -done
+        uint256 equivalentEth = amount / purchaseRatio;
+        payable(msg.sender).transfer(equivalentEth);
     }
 }
